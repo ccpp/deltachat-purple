@@ -1,0 +1,4 @@
+[submodule "contrib/deltachat-core"]
+	path = contrib/deltachat-core
+	url = https://github.com/r10s/deltachat-core.git
+	ignore = dirty
