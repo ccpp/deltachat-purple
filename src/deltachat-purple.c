@@ -1,10 +1,10 @@
+#include "deltachat-purple.h"
+
 #define PURPLE_PLUGINS
 
 #include <libpurple/notify.h>
 #include <libpurple/plugin.h>
 #include <libpurple/version.h>
-#include <libpurple/debug.h>
-#include <libpurple/blist.h>
 
 static PurplePlugin *_plugin;
 #define PLUGIN_ID "prpl-ccpp-deltachat"
@@ -38,7 +38,7 @@ static PurplePluginInfo info = {
     NULL,                          
                                    
     (PurplePluginUiInfo*) NULL,
-    (PurplePluginLoaderInfo*) NULL,
+    &prpl_info,
     (PurplePluginUiInfo*) NULL,
     plugin_actions,
     NULL,                          
@@ -46,7 +46,7 @@ static PurplePluginInfo info = {
     NULL,                          
     NULL                           
 };
-PURPLE_INIT_PLUGIN(ldapsync, init_plugin, info)
+PURPLE_INIT_PLUGIN(deltachat, init_plugin, info)
 
 static void                        
 init_plugin(PurplePlugin *plugin)

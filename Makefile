@@ -1,14 +1,14 @@
 CFLAGS=-g -Wall $(shell pkg-config --cflags purple glib-2.0)
-LDFLAGS=-lldap -llber $(shell pkg-config --libs purple glib-2.0)
+LDFLAGS=$(shell pkg-config --libs purple glib-2.0)
 DELTACHAT_CORE=contrib/deltachat-core/bin/Debug/deltachat-core
 PREFIX=/usr/local
 
 default: bin/deltachat-purple.so $(DELTACHAT_CORE)
 
-bin/deltachat-purple.so: bin/deltachat-purple.o
-	$(CC) -shared $(LDFLAGS) $< -o $@
+bin/deltachat-purple.so: bin/deltachat-purple.o bin/deltachat-protocol.o
+	$(CC) -shared $(LDFLAGS) $^ -o $@
 
-bin/deltachat-purple.o: src/deltachat-purple.c
+bin/%.o: src/%.c
 	mkdir -p -v bin
 	$(CC) -fPIC $(CFLAGS) -c -o $@ $<
 
@@ -23,9 +23,9 @@ contrib/deltachat-core/bin/Debug/deltachat-core: contrib/deltachat-core/
 		false
 	fi
 
-contrib/deltachat-core/:
-	git submodule update --init $@
-	(cd $@ && git apply ../../deltachat-core-c99.patch) || true
+contrib/deltachat-core/deltachat-core.cbp:
+	git submodule update --init contrib/deltachat-core
+	(cd contrib/deltachat-core && git apply ../../deltachat-core-c99.patch) || true
 
 install: bin/deltachat-purple.so $(DELTACHAT_CORE)
 	mkdir -pv $(DESTDIR)$(PREFIX)/share/purple/deltachat
@@ -35,7 +35,7 @@ install: bin/deltachat-purple.so $(DELTACHAT_CORE)
 uninstall:
 	rm -fv $(DESTDIR)/usr/lib/purple-2/deltachat-purple.so
 
-install-user: deltachat-purple.so
+install-user: bin/deltachat-purple.so
 	mkdir -pv $(HOME)/.purple/deltachat/
 	install -vm 664 $< $(HOME)/.purple/plugins/
 	install -vm 755 $(DELTACHAT_CORE) $(HOME)/.purple/deltachat/deltachat-core
